@@ -2,6 +2,7 @@ name: Build APK
 on:
   push:
     branches: [ main ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,14 +12,26 @@ jobs:
       - name: Build with Buildozer
         uses: kivy/buildozer@master
         with:
-          # အဓိကအချက်မှာ အောက်ပါအတိုင်း command ကို ရေးပေးခြင်းဖြစ်သည်
           args: android debug
         env:
-          # Buildozer ရဲ့ root check ကို ပိတ်ပစ်ခြင်း
+          # Root အဖြစ် run ရန် အတည်ပြုချက်အတွက် အသုံးပြုသူအား စောင့်မနေစေရန်
+          # လိုအပ်သော Environment Variables များအားလုံးကို သတ်မှတ်ခြင်း
           BUILDOZER_ALLOW_ROOT: "1"
-          # အရေးကြီးဆုံး: Buildozer ကို script ပုံစံဖြင့် non-interactive run စေခြင်း
-          # ဒီအချက်က input() မတောင်းအောင် တားဆီးပေးပါလိမ့်မယ်
-          PYTHONUNBUFFERED: "1"
+          # အောက်ပါလိုင်းသည် input() ကို အလိုအလျောက် bypass လုပ်ရန် အရေးကြီးသည်
+          # input မတောင်းစေရန် buildozer ၏ build အား အခြား user အဖြစ် ပြောင်း run စေပါ
+          
+      # အကယ်၍ အထက်ပါနည်းဖြင့် မရပါက အောက်ပါ steps ကိုသုံးပါ
+      # buildozer ကို Docker အပြင်ဘက်တွင် တိုက်ရိုက် run သောနည်းလမ်း
+      - name: Install Buildozer
+        run: |
+          pip install buildozer
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          
+      - name: Build APK
+        run: |
+          # အောက်ပါ command သည် interactive input ကို ရှောင်ရှားပြီး build လုပ်ပေးပါမည်
+          echo "y" | buildozer android debug
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
