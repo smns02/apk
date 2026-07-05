@@ -15,7 +15,6 @@ jobs:
         id: buildozer
         with:
           buildozer_version: latest
-          # ဒီနေရာမှာ အရေးကြီးပါတယ် - buildozer.spec ကို ရှာဖို့အတွက်
           workdir: . 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -25,5 +24,3 @@ jobs:
         with:
           name: package
           path: ${{ steps.buildozer.outputs.filename }}
-
-          ####
