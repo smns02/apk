@@ -11,11 +11,12 @@ jobs:
       - name: Build with Buildozer
         uses: kivy/buildozer@master
         with:
-          # ဒီနေရာမှာ 'yes |' ကို ထည့်လိုက်ပါ
-          args: yes | buildozer android debug
+          # ဒီ args က ပိုပြီးသေချာပါတယ်
+          args: android debug
         env:
-          # ဒီစာကြောင်းက root နဲ့ run တဲ့အခါ အလိုအလျောက် အတည်ပြုပေးမှာပါ
-          BUILDOZER_ALLOW_ROOT: 1
+          # ဤ variable နှစ်ခုလုံးကို ထည့်ပေးပါ
+          BUILDOZER_ALLOW_ROOT: "1"
+          BUILDOZER_CHECK_ROOT: "False"
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
