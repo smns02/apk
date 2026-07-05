@@ -17,10 +17,14 @@ jobs:
           
       - name: Build APK
         run: |
+          # buildozer clean အစား directory အဟောင်းတွေကို ဖျက်ပေးတာပါ
+          rm -rf .buildozer
+          
           export BUILDOZER_NO_CHECK_ROOT=1
           export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/27.3.13750724
           export ANDROID_NDK_PATH=/usr/local/lib/android/sdk/ndk/27.3.13750724
-          buildozer clean
+          
+          # Build လုပ်ခြင်း
           yes | buildozer android debug
           
       - name: Upload APK
