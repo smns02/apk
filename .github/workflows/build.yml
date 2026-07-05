@@ -9,13 +9,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Build with Buildozer
-        uses: docker://kivy/buildozer:latest
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo-dev cmake libffi-dev libssl-dev
+      
+      - name: Install Buildozer
+        run: |
+          pip3 install --user --upgrade buildozer
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Build APK
+        run: |
+          # Root check ကို လုံးဝပိတ်ပါ
+          export BUILDOZER_NO_CHECK_ROOT=1
+          
+          # NDK 404 Error မတက်အောင် လှည့်စားခြင်း (Buildozer က ဒေါင်းလုပ်ဆွဲစရာမလိုတော့ပါ)
+          export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/27.3.13750724
+          
+          # 'yes |' က မေးခွန်းအားလုံးကို အလိုအလျောက် 'y' ဖြစ်သွားအောင် လုပ်ပေးပါလိမ့်မယ်
+          yes | buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
-          # NDK ကို သူ့ဘာသာ မဒေါင်းစေရန် လိုအပ်သော environment များကို ကြိုတင်သတ်မှတ်ပေးခြင်း
-          args: /bin/bash -c "pip install --upgrade buildozer && buildozer android debug"
-        env:
-          BUILDOZER_NO_CHECK_ROOT: "1"
-          # အဓိကအချက်: GitHub Runner ရဲ့ NDK Path ကို ညွှန်းပေးလိုက်ခြင်း
-          ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/27.3.13750724
-          ANDROID_NDK_PATH: /usr/local/lib/android/sdk/ndk/27.3.13750724
+          name: package
+          path: bin/*.apk
