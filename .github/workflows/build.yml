@@ -9,27 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo-dev cmake libffi-dev libssl-dev
-          pip3 install --upgrade buildozer
-          
-      - name: Build APK
-        run: |
-          # Root check ပိတ်ခြင်း
-          export BUILDOZER_NO_CHECK_ROOT=1
-          
-          # GitHub Runner မှာရှိတဲ့ NDK path ကို တိုက်ရိုက်သတ်မှတ်ပေးခြင်း
-          # ဒီ path တွေက GitHub ရဲ့ official image ထဲမှာ အမြဲရှိနေတာပါ
-          export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/27.3.13750724
-          export ANDROID_NDK_PATH=/usr/local/lib/android/sdk/ndk/27.3.13750724
-          
-          # buildozer.spec မှာသတ်မှတ်ထားတဲ့အတိုင်း NDK မရှာမိအောင် လှည့်စားခြင်း
-          # Buildozer က သူကိုယ်တိုင် ဒေါင်းလုပ်မဆွဲတော့အောင် ဒီ directory ကို ဖန်တီးပေးထားလိုက်ပါ
-          mkdir -p /home/runner/.buildozer/android/platform/android-ndk-r27b
-          
-          yes | buildozer android debug
+      - name: Build with Docker
+        uses: docker://kivy/buildozer:latest
+        with:
+          args: /bin/bash -c "pip install --upgrade buildozer && buildozer android debug"
+        env:
+          BUILDOZER_NO_CHECK_ROOT: "1"
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
