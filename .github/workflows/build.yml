@@ -9,14 +9,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Build with Buildozer
-        uses: kivy/buildozer@master
-        with:
-          args: android debug
-        env:
-          # ဒီ variable တွေက root check ကို ပိတ်ဖို့အတွက် အဓိကကျပါတယ်
-          BUILDOZER_ALLOW_ROOT: "1"
-          BUILDOZER_NO_CHECK_ROOT: "1"
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          pip3 install --upgrade buildozer
+          
+      - name: Build APK
+        run: |
+          # 'yes' command က အလိုအလျောက် 'y' ကို ဖြေပေးသွားမှာပါ
+          yes | buildozer android debug
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
