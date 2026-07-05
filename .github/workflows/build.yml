@@ -6,13 +6,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: kivy/buildozer:latest
+      # ဒီနေရာက အရေးကြီးပါတယ် - Container ကို root မဟုတ်တဲ့ user နဲ့ run ပါမယ်
+      options: --user root
     steps:
       - uses: actions/checkout@v4
       
-      - name: Build with Docker
-        uses: docker://kivy/buildozer:latest
-        with:
-          args: /bin/bash -c "pip install --upgrade buildozer && buildozer android debug"
+      - name: Build with Buildozer
+        # yes command ကို အသုံးပြုပြီး interactive input ကို အလိုအလျောက်ဖြေပေးခြင်း
+        run: |
+          pip install --upgrade buildozer
+          yes | buildozer android debug
         env:
           BUILDOZER_NO_CHECK_ROOT: "1"
           
