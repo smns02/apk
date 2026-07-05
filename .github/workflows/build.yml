@@ -9,29 +9,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo-dev cmake libffi-dev libssl-dev
-      
-      - name: Install Buildozer
-        run: |
-          pip3 install --user --upgrade buildozer
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Build APK
-        run: |
-          # Root check ကို လုံးဝပိတ်ပါ
-          export BUILDOZER_NO_CHECK_ROOT=1
-          
-          # NDK 404 Error မတက်အောင် လှည့်စားခြင်း (Buildozer က ဒေါင်းလုပ်ဆွဲစရာမလိုတော့ပါ)
-          export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/27.3.13750724
-          
-          # 'yes |' က မေးခွန်းအားလုံးကို အလိုအလျောက် 'y' ဖြစ်သွားအောင် လုပ်ပေးပါလိမ့်မယ်
-          yes | buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Build with Buildozer
+        uses: kivy/buildozer@master
         with:
-          name: package
-          path: bin/*.apk
+          args: android debug
+        env:
+          BUILDOZER_NO_CHECK_ROOT: "1"
+          # အရေးကြီးဆုံး: Buildozer က သူ့ဘာသာ ဖိုင်တွေ ဒေါင်းလုပ်ဆွဲတာကို ပိတ်ပေးခြင်း
+          # ဒါက Error 404 ကို တားဆီးပေးပါလိမ့်မယ်
+          # GitHub Runner မှာရှိတဲ့ NDK ကိုပဲ သုံးခိုင်းပါ
+          ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/27.3.13750724
