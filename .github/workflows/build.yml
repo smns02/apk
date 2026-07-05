@@ -1,4 +1,4 @@
-Name: Build APK
+name: Build APK
 on:
   push:
     branches: [ main ]
@@ -12,27 +12,19 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          # libtinfo5 ကို libtinfo-dev နဲ့ အစားထိုးလိုက်ပါတယ်
           sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo-dev cmake libffi-dev libssl-dev
           pip3 install --upgrade buildozer
           
-            - name: Build APK
+      - name: Build APK
         run: |
           export BUILDOZER_NO_CHECK_ROOT=1
-          # GitHub runner က NDK path ကို Buildozer သိအောင် လုပ်ပေးခြင်း
           export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/27.3.13750724
           export ANDROID_NDK_PATH=/usr/local/lib/android/sdk/ndk/27.3.13750724
-          
-          # Clean လုပ်ပြီးမှ Build ပါ
           buildozer clean
           yes | buildozer android debug
-
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: package
           path: bin/*.apk
-
-
-ဒီလ်ုလားဗျ
