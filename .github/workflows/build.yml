@@ -11,12 +11,14 @@ jobs:
       - name: Build with Buildozer
         uses: kivy/buildozer@master
         with:
-          # ဒီ args က ပိုပြီးသေချာပါတယ်
+          # အဓိကအချက်မှာ အောက်ပါအတိုင်း command ကို ရေးပေးခြင်းဖြစ်သည်
           args: android debug
         env:
-          # ဤ variable နှစ်ခုလုံးကို ထည့်ပေးပါ
+          # Buildozer ရဲ့ root check ကို ပိတ်ပစ်ခြင်း
           BUILDOZER_ALLOW_ROOT: "1"
-          BUILDOZER_CHECK_ROOT: "False"
+          # အရေးကြီးဆုံး: Buildozer ကို script ပုံစံဖြင့် non-interactive run စေခြင်း
+          # ဒီအချက်က input() မတောင်းအောင် တားဆီးပေးပါလိမ့်မယ်
+          PYTHONUNBUFFERED: "1"
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
