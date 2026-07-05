@@ -17,14 +17,18 @@ jobs:
           
       - name: Build APK
         run: |
-          # buildozer clean အစား directory အဟောင်းတွေကို ဖျက်ပေးတာပါ
+          # 1. Root check ကို ပိတ်ပါ
+          export BUILDOZER_NO_CHECK_ROOT=1
+          
+          # 2. GitHub Actions မှာရှိပြီးသား NDK နဲ့ SDK path ကို Buildozer သုံးအောင်လုပ်ပါ
+          export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/27.3.13750724
+          export ANDROID_SDK_HOME=/usr/local/lib/android/sdk
+          
+          # 3. အရေးကြီးဆုံး: Buildozer ကို သူ့ဘာသာသူ ဒေါင်းလုပ်မဆွဲခိုင်းတော့ဘဲ 
+          # ရှိပြီးသား Path ကို အသိအမှတ်ပြုခိုင်းခြင်း
           rm -rf .buildozer
           
-          export BUILDOZER_NO_CHECK_ROOT=1
-          export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/27.3.13750724
-          export ANDROID_NDK_PATH=/usr/local/lib/android/sdk/ndk/27.3.13750724
-          
-          # Build လုပ်ခြင်း
+          # 4. Build စတင်ခြင်း
           yes | buildozer android debug
           
       - name: Upload APK
