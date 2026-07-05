@@ -12,14 +12,15 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          # libtinfo5 ကို libtinfo-dev နဲ့ အစားထိုးလိုက်ပါတယ်
           sudo apt-get install -y python3-pip git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo-dev cmake libffi-dev libssl-dev
           pip3 install --upgrade buildozer
           
       - name: Build APK
         run: |
-          # Buildozer ကို non-interactive ဖြစ်အောင် ဒီလိုရေးပါ
           export BUILDOZER_NO_CHECK_ROOT=1
+          export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/27.3.13750724
+          export ANDROID_NDK_PATH=/usr/local/lib/android/sdk/ndk/27.3.13750724
+          buildozer clean
           yes | buildozer android debug
           
       - name: Upload APK
