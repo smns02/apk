@@ -13,7 +13,8 @@ jobs:
       - name: Build with Buildozer
         uses: kivy/buildozer@master
         with:
-          args: android debug
+          # ဒီနေရာမှာ 'yes' ကို ထည့်ပေးလိုက်ပါ
+          args: yes | buildozer android debug
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
