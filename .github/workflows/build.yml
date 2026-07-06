@@ -1,36 +1,41 @@
-name: Build Kivy Android App
+name: Automatic Android Build
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Install System Dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev build-essential
-        pip3 install --upgrade buildozer cython
+      - name: Install Buildozer dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev build-essential
+          pip3 install --upgrade buildozer cython
 
-    - name: Build with Buildozer
-      run: |
-        # အဟောင်းတွေကို ရှင်းထုတ်ပြီးမှ အသစ် build ပါ
-        buildozer clean
-        # Buildozer ကို verbose mode (-v) နဲ့ run ပါမှ error အစစ်ကို မြင်ရမှာပါ
-        buildozer -v android debug
-      env:
-        ANDROID_ACCEPT_SDK_LICENSE: 1
+      - name: Create buildozer.spec (If not exists)
+        run: |
+          if [ ! -f buildozer.spec ]; then
+            buildozer init
+          fi
 
+      - name: Build APK
+        run: |
+          # SDK License ကို အလိုအလျောက် သဘောတူခြင်း
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          
+          # Buildozer ကို runခြင်း
+          buildozer -v android debug
+        env:
+          ANDROID_ACCEPT_SDK_LICENSE: 1
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: package-apk
-        path: bin/*.apk
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-app-apk
+          path: bin/*.apk
