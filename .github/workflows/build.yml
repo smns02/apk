@@ -1,21 +1,36 @@
-name: Build APK
+name: Build Kivy Android App
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Build with Buildozer
-        uses: kivy/buildozer@master
-        with:
-          args: android debug
-        env:
-          BUILDOZER_NO_CHECK_ROOT: "1"
-          # အရေးကြီးဆုံး: Buildozer က သူ့ဘာသာ ဖိုင်တွေ ဒေါင်းလုပ်ဆွဲတာကို ပိတ်ပေးခြင်း
-          # ဒါက Error 404 ကို တားဆီးပေးပါလိမ့်မယ်
-          # GitHub Runner မှာရှိတဲ့ NDK ကိုပဲ သုံးခိုင်းပါ
-          ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/27.3.13750724
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Cache Buildozer global directory
+      uses: actions/cache@v4
+      with:
+        path: .buildozer_global
+        key: buildozer-global-${{ runner.os }}
+
+    - name: Install Buildozer and dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+        pip3 install --upgrade buildozer cython
+
+    - name: Build with Buildozer
+      run: |
+        buildozer android debug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: package-apk
+        path: bin/*.apk
