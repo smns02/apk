@@ -13,24 +13,24 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install dependencies
+    - name: Install System Dependencies
       run: |
         sudo apt update
-        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
+        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev build-essential
         pip3 install --upgrade buildozer cython
 
     - name: Build with Buildozer
       run: |
-        # SDK Licenses ကို ကြိုတင်လက်ခံခြင်း
-        mkdir -p ~/.android
-        touch ~/.android/repositories.cfg
+        # Buildozer က SDK/NDK တွေကို အလိုအလျောက် သတ်မှတ်ပေးဖို့အတွက်
+        # ပထမဆုံးအကြိမ်မှာ လိုင်စင်တွေ အလိုအလျောက်လက်ခံဖို့ ဒီ command ကိုသုံးပါ
+        export ANDROID_HOME=$HOME/.android/sdk
+        export ANDROID_NDK_HOME=$HOME/.android/ndk
         
-        # Buildozer ကို အသုံးပြု၍ APK ထုတ်ခြင်း
-        buildozer android debug
+        # buildozer.spec ထဲကအတိုင်း build စတင်ခြင်း
+        buildozer -v android debug
       env:
-        # Buildozer က လိုင်စင်ကို အလိုအလျောက်လက်ခံအောင် ကူညီပေးခြင်း
-        ANDROID_HOME: /home/runner/.buildozer/android/platform/android-sdk
-        ANDROID_NDK_HOME: /home/runner/.buildozer/android/platform/android-ndk
+        # လိုင်စင်အလိုအလျောက် သဘောတူရန်
+        ANDROID_ACCEPT_SDK_LICENSE: 1
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
