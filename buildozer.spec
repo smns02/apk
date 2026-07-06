@@ -40,6 +40,8 @@ android.minapi = 24
 # (str) Android NDK version
 android.ndk = 25b
 
+android.accept_sdk_license = True
+
 # (bool) enables Android auto backup feature
 android.allow_backup = True
 
