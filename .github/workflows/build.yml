@@ -1,4 +1,4 @@
-name: Automatic Android Build
+name: Build with Docker
 
 on:
   push:
@@ -8,33 +8,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Install Buildozer dependencies
+      - uses: actions/checkout@v4
+      
+      - name: Build with Docker
         run: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev build-essential
-          pip3 install --upgrade buildozer cython
-
-      - name: Create buildozer.spec (If not exists)
-        run: |
-          if [ ! -f buildozer.spec ]; then
-            buildozer init
-          fi
-
-      - name: Build APK
-        run: |
-          # SDK License ကို အလိုအလျောက် သဘောတူခြင်း
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
+          # Dockerfile ကိုသုံးပြီး build လုပ်ခြင်း
+          docker build -t kivy-build .
+          docker run --rm -v $(pwd):/home/user/host kivy-build
           
-          # Buildozer ကို runခြင်း
-          buildozer -v android debug
-        env:
-          ANDROID_ACCEPT_SDK_LICENSE: 1
-
-      - name: Upload Result
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: my-app-apk
