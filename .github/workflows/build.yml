@@ -9,12 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - name: Build with Docker
         run: |
+          # Docker Image တည်ဆောက်ခြင်း
           docker build -t kivy-build .
-          # BUILDOZER_ALLOW_ROOT=1 ကို ထည့်ပေးရပါမယ်
+          
+          # Container ကို Run လုပ်ခြင်း (BUILDOZER_ALLOW_ROOT ကို ဒီမှာ ထည့်သွင်းပေးပါ)
           docker run --rm -v $(pwd):/home/user/host -e BUILDOZER_ALLOW_ROOT=1 kivy-build
-
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
