@@ -21,16 +21,13 @@ jobs:
 
     - name: Build with Buildozer
       run: |
-        # Buildozer က SDK/NDK တွေကို အလိုအလျောက် သတ်မှတ်ပေးဖို့အတွက်
-        # ပထမဆုံးအကြိမ်မှာ လိုင်စင်တွေ အလိုအလျောက်လက်ခံဖို့ ဒီ command ကိုသုံးပါ
-        export ANDROID_HOME=$HOME/.android/sdk
-        export ANDROID_NDK_HOME=$HOME/.android/ndk
-        
-        # buildozer.spec ထဲကအတိုင်း build စတင်ခြင်း
+        # အဟောင်းတွေကို ရှင်းထုတ်ပြီးမှ အသစ် build ပါ
+        buildozer clean
+        # Buildozer ကို verbose mode (-v) နဲ့ run ပါမှ error အစစ်ကို မြင်ရမှာပါ
         buildozer -v android debug
       env:
-        # လိုင်စင်အလိုအလျောက် သဘောတူရန်
         ANDROID_ACCEPT_SDK_LICENSE: 1
+
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
