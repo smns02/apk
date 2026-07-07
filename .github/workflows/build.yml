@@ -10,6 +10,7 @@ jobs:
         uses: ArtemSBulgakov/buildozer-action@v1
         with:
           command: buildozer android debug
+          # buildozer က လိုအပ်တာတွေကို သူဘာသာ install လုပ်ပါလိမ့်မယ်
       
       - name: Upload APK
         uses: actions/upload-artifact@v4
